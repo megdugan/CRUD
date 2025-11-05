@@ -61,7 +61,7 @@ def update(tt):
 
 if __name__ == '__main__':
     import sys, os
-    dbi.conf('md109_db')
+    dbi.conf('nh107_db')
     if len(sys.argv) > 1:
         # arg, if any, is the desired port number
         port = int(sys.argv[1])
