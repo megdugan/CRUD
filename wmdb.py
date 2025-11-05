@@ -51,12 +51,12 @@ def get_incomplete_movies(conn):
     curs.execute('''select * from movie where 'release' is NULL or director is NULL''')
     return curs.fetchall()
 
-def update_movie(conn, tt, release, director):
+def update_movie(conn, tt, title, release, director, addedby):
     '''Updates the given movie with the submitted data.'''
     curs = dbi.dict_cursor(conn)
     curs.execute('''update movie
-                    set `release`=%s, director=%s
-                    where tt=%s''', [release, director, tt])
+                    set tt=%s, title=%s, `release`=%s, director=%s, addedby=%s
+                    where tt=%s''', [tt, title, release, director, addedby, tt])
     conn.commit()
     return
 
