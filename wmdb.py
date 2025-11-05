@@ -17,11 +17,11 @@ def find_tt(conn, tt):
                     where tt=%s''', [tt])
     return curs.fetchall()
 
-def insert_movie(conn, tt, movie):
+def insert_movie(conn, tt, title, release):
     '''Adds the submitted movie to the database.'''
     curs = dbi.dict_cursor(conn)
-    curs.execute('''insert into movie (tt, title, addedby) 
-                    values (%s, %s, %s)''', [tt, movie, addedby])
+    curs.execute('''insert into movie (tt, title, `release`, addedby) 
+                    values (%s, %s, %s, %s)''', [tt, title, release, addedby])
     conn.commit()
     return
 
