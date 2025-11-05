@@ -5,4 +5,16 @@
 
 <p>Select and update or delete an incomplete movie.</p>
 
+<form method=POST action="/cs304crud/select/">
+    <fieldset>
+        <label for="menu-tt">Movies without release dates or directors:</label>
+            <select id="menu-tt" name="menu-tt">
+                <option value="none">Choose One</option>
+                <!-- <option value="213">Little Women</option> -->
+                <!-- replace with jinja  -->
+            </select>
+        <input type="submit" name="submit-btn" value="Choose">
+    </fieldset>
+</form>
+
 {% endblock %}
