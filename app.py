@@ -40,20 +40,24 @@ def insert():
             flash('The movie id ' + str(tt) + ' was unavailable. Please try again.')
             return redirect(url_for('insert'))
 
-@app.route('/select/')
+
+@app.route('/select/', methods=['POST', 'GET'])
 def select():
     conn = dbi.connect()
-    incomplete_movies = db.get_incomplete_movies(conn)
-    return render_template('select.html', movies=incomplete_movies)
-
-@app.route('/update/<tt>', methods=['GET', 'POST'])
-def update():
     if request.method == 'GET':
         # Send a blank form
-        return render_template('update.html')
+        incomplete_movies = db.get_incomplete_movies(conn)
+        return render_template('select.html', movies=incomplete_movies)
     else:
         # Method has to be POST, so the form has been filled out
-        return redirect(url_for('select'))
+        tt = request.form.get('menu-tt')
+        return redirect(url_for('update', tt=tt))
+
+@app.route('/update/<tt>')
+def update(tt):
+    conn = dbi.connect()
+    movie = db.get_movie_from_tt(conn, tt)
+    return render_template('update.html', movie = movie[0])
 
 if __name__ == '__main__':
     import sys, os
