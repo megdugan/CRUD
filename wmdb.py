@@ -25,11 +25,25 @@ def insert_movie(conn, tt, movie):
     conn.commit()
     return
 
+def delete_movie(conn, tt):
+    '''
+    Delete a movie from the database.
+    Args:
+        conn -> pymysql.connections.Connection
+        tt -> int
+    Return:
+        None
+    '''
+    curs = dbi.dict_cursor(conn)
+    curs.execute('''delete from movie where tt = %s''', [tt])
+    conn.commit()
+    return
+
 def get_incomplete_movies(conn):
     '''
-    Get list of information about movies without a release date or director
+    Get list of information about movies without a release date or director.
     Args:
-        None
+        conn -> pymysql.connections.Connection
     Return:
         list of movies -> dict[]
     '''
@@ -37,7 +51,7 @@ def get_incomplete_movies(conn):
     curs.execute('''select * from movie where 'release' is NULL or director is NULL''')
     return curs.fetchall()
 
-def update(conn, tt, release, director):
+def update_movie(conn, tt, release, director):
     '''Updates the given movie with the submitted data.'''
     curs = dbi.dict_cursor(conn)
     curs.execute('''update movie
@@ -46,8 +60,21 @@ def update(conn, tt, release, director):
     conn.commit()
     return
 
+def delete_movie(conn, tt):
+    '''
+    Delete a movie from the database.
+    Args:
+        conn -> pymysql.connections.Connection
+        tt -> int
+    Return:
+        None
+    '''
+    curs = dbi.dict_cursor(conn)
+    curs.execute('''delete from movie where tt = %s''', [tt])
+    conn.commit()
+    return
+
 if __name__ == '__main__':
     dbi.conf("md109_db")
     conn = dbi.connect()
-    print(find_tt(conn, 123))
-    print(get_incomplete_movies(conn)[:5])
+    print(type(conn))
