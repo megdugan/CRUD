@@ -12,9 +12,6 @@ import wmdb as db
 app = Flask(__name__)
 app.secret_key = secrets.token_hex()
 
-# Configures DBI
-print(dbi.conf('md109_db'))
-
 # This gets us better error messages for certain common request errors
 app.config['TRAP_BAD_REQUEST_ERRORS'] = True
 
@@ -43,16 +40,20 @@ def insert():
             flash('The movie id ' + str(tt) + ' was unavailable. Please try again.')
             return redirect(url_for('insert'))
 
-
 @app.route('/select/')
 def select():
     conn = dbi.connect()
     incomplete_movies = db.get_incomplete_movies(conn)
     return render_template('select.html', movies=incomplete_movies)
 
-@app.route('/update/<tt>')
+@app.route('/update/<tt>', methods=['GET', 'POST'])
 def update():
-    return render_template('main.html')
+    if request.method == 'GET':
+        # Send a blank form
+        return render_template('update.html')
+    else:
+        # Method has to be POST, so the form has been filled out
+        return redirect(url_for('select'))
 
 if __name__ == '__main__':
     import sys, os
