@@ -1,6 +1,6 @@
 # Meg and Nina
 # CRUD assignment
-# Database functions
+# (wmdb.py) Contains all database methods.
 
 import cs304dbi as dbi
 
@@ -18,6 +18,11 @@ def find_tt(conn, tt):
     '''
     Checks if the tt exists in the database.
     If none, returns empty dict. Otherwise, returns result.
+    Args:
+        conn -> pymysql.connections.Connection
+        tt -> int
+    Return:
+        list of movies -> dict[]
     '''
     curs = dbi.dict_cursor(conn)
     curs.execute('''select tt
@@ -26,7 +31,17 @@ def find_tt(conn, tt):
     return curs.fetchall()
 
 def insert_movie(conn, tt, title, release):
-    '''Adds the submitted movie to the database.'''
+    '''
+    Adds the submitted movie to the database.
+    Args:
+        conn -> pymysql.connections.Connection
+        tt -> int
+        title -> str
+        release -> int
+    Return:
+        None
+    '''
+    
     curs = dbi.dict_cursor(conn)
     curs.execute('''insert into movie (tt, title, `release`, addedby) 
                     values (%s, %s, %s, %s)''', [tt, title, release, addedby])
@@ -60,7 +75,18 @@ def get_incomplete_movies(conn):
     return curs.fetchall()
 
 def update_movie(conn, tt, title, release, director, addedby):
-    '''Updates the given movie with the submitted data.'''
+    '''
+    Updates the given movie with the submitted data.
+    Args:
+        conn -> pymysql.connections.Connection
+        tt -> int
+        title -> str
+        release -> int
+        director -> int
+        addedby -> int
+    Return:
+        None
+    '''
     curs = dbi.dict_cursor(conn)
     curs.execute('''update movie
                     set tt=%s, title=%s, `release`=%s, director=%s, addedby=%s
