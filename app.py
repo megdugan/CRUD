@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 import secrets
 import wmdb
 import cs304dbi as dbi
+import wmdb as db
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex()
@@ -45,7 +46,9 @@ def insert():
 
 @app.route('/select/')
 def select():
-    return render_template('select.html')
+    conn = dbi.connect()
+    incomplete_movies = db.get_incomplete_movies(conn)
+    return render_template('select.html', movies=incomplete_movies)
 
 @app.route('/update/<tt>')
 def update():
@@ -53,6 +56,7 @@ def update():
 
 if __name__ == '__main__':
     import sys, os
+    dbi.conf('nh107_db')
     if len(sys.argv) > 1:
         # arg, if any, is the desired port number
         port = int(sys.argv[1])
