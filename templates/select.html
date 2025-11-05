@@ -10,8 +10,9 @@
         <label for="menu-tt">Movies without release dates or directors:</label>
             <select id="menu-tt" name="menu-tt">
                 <option value="none">Choose One</option>
-                <!-- <option value="213">Little Women</option> -->
-                <!-- replace with jinja  -->
+                {% for m in movies %}
+                <option value={{m.tt}}>{{m.title}}</option>
+                {% endfor %}
             </select>
         <input type="submit" name="submit-btn" value="Choose">
     </fieldset>
