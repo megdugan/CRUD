@@ -22,11 +22,25 @@ def insert_movie(conn, tt, movie):
     conn.commit()
     return
 
+def delete_movie(conn, tt):
+    '''
+    Delete a movie from the database.
+    Args:
+        conn -> pymysql.connections.Connection
+        tt -> int
+    Return:
+        None
+    '''
+    curs = dbi.dict_cursor(conn)
+    curs.execute('''delete from movie where tt = %s''', [tt])
+    conn.commit()
+    return
+
 def get_incomplete_movies(conn):
     '''
-    Get list of information about movies without a release date or director
+    Get list of information about movies without a release date or director.
     Args:
-        None
+        conn -> pymysql.connections.Connection
     Return:
         list of movies -> dict[]
     '''
@@ -38,3 +52,4 @@ if __name__ == '__main__':
     dbi.conf("nh107_db")
     conn = dbi.connect()
     print(get_incomplete_movies(conn)[:5])
+    print(type(conn))
