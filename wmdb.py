@@ -6,6 +6,14 @@ import cs304dbi as dbi
 
 addedby = 123
 
+def get_movie_from_tt(conn, tt):
+    '''
+    Get movie with matching tt
+    '''
+    curs = dbi.dict_cursor(conn)
+    curs.execute('''select * from movie where tt = %s''', [tt])
+    return curs.fetchall()
+
 def find_tt(conn, tt):
     '''
     Checks if the tt exists in the database.
