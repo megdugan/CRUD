@@ -15,8 +15,8 @@
 <nav>
   <ul>
     <li><a href="{{url_for('main')}}">Home</a></li>
-    <li><a href="{{url_for('insert')}}">Add Movie</a></li>
-    <li><a href="{{url_for('select')}}">Update Movie</a></li>
+    <li><a href="{{url_for('insert')}}">Insert Movie</a></li>
+    <li><a href="{{url_for('select')}}">Select Movie</a></li>
   </ul>
 </nav>
 {% endblock %}
@@ -33,7 +33,6 @@
 {% endwith %}
             
 {% block main_content %}
-<h1>Welcome!</h1>
 {% endblock %}
 
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
