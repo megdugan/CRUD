@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.secret_key = secrets.token_hex()
 
 # Configures DBI
-print(dbi.conf('md109_db'))
+print(dbi.conf('nh107_db'))
 
 # This gets us better error messages for certain common request errors
 app.config['TRAP_BAD_REQUEST_ERRORS'] = True
