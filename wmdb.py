@@ -7,7 +7,10 @@ import cs304dbi as dbi
 addedby = 123
 
 def find_tt(conn, tt):
-    '''Checks if the tt exists in the database.'''
+    '''
+    Checks if the tt exists in the database.
+    If none, returns empty dict. Otherwise, returns result.
+    '''
     curs = dbi.dict_cursor(conn)
     curs.execute('''select tt
                     from movie
@@ -15,7 +18,7 @@ def find_tt(conn, tt):
     return curs.fetchall()
 
 def insert_movie(conn, tt, movie):
-    '''Adds the submitted movie to the database'''
+    '''Adds the submitted movie to the database.'''
     curs = dbi.dict_cursor(conn)
     curs.execute('''insert into movie (tt, title, addedby) 
                     values (%s, %s, %s)''', [tt, movie, addedby])
@@ -48,8 +51,30 @@ def get_incomplete_movies(conn):
     curs.execute('''select * from movie where 'release' is NULL or director is NULL''')
     return curs.fetchall()
 
+def update_movie(conn, tt, release, director):
+    '''Updates the given movie with the submitted data.'''
+    curs = dbi.dict_cursor(conn)
+    curs.execute('''update movie
+                    set `release`=%s, director=%s
+                    where tt=%s''', [release, director, tt])
+    conn.commit()
+    return
+
+def delete_movie(conn, tt):
+    '''
+    Delete a movie from the database.
+    Args:
+        conn -> pymysql.connections.Connection
+        tt -> int
+    Return:
+        None
+    '''
+    curs = dbi.dict_cursor(conn)
+    curs.execute('''delete from movie where tt = %s''', [tt])
+    conn.commit()
+    return
+
 if __name__ == '__main__':
-    dbi.conf("nh107_db")
+    dbi.conf("md109_db")
     conn = dbi.connect()
-    print(get_incomplete_movies(conn)[:5])
     print(type(conn))
