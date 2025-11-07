@@ -6,7 +6,32 @@
 
 <p>Update or delete an incomplete movie.</p>
 
-<p>We haven't implemented this...</p>
-<p>But you selected {{movie.title}}!!!</p>
+<form method=POST action="">
+    <table>
+        <tr>
+            <td><label for="movie-title">Title</label></td>
+            <td><input id="movie-title" name='movie-title' value="{{ movie.title }}"></td> 
+        </tr>
+        <tr>
+            <td><label for="movie-tt">Movie id</label></td>
+            <td><input id="movie-tt" name='movie-tt' value="{{ movie.tt }}"></td>
+        </tr>
+        <tr>
+            <td><label for="movie-release">Release year</label></td>
+            <td><input id="movie-release" name='movie-release' value="{{ movie.release }}"></td>
+        </tr>
+        <tr>
+            <td><label for="movie-addedby">Added by</label></td>
+            <td><input id="movie-addedby" name='movie-addedby' value="{{ movie.addedby }}"></td>
+        </tr>
+        <tr>
+            <td><label for="movie-director">Director ID</label></td>
+            <td><input id="movie-director" name='movie-director' value="{{ movie.director }}"></td>
+        </tr>
+    </table>
+    <input type="submit" name="submit" value="update">
+    <input type="submit" name="submit" value="delete">
+</form>
+
 
 {% endblock %}

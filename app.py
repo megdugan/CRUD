@@ -49,15 +49,30 @@ def select():
         incomplete_movies = db.get_incomplete_movies(conn)
         return render_template('select.html', movies=incomplete_movies)
     else:
-        # Method has to be POST, so the form has been filled out
+        # Method is POST, form has been filled out
+        # Redirect to update incomplete movie form
         tt = request.form.get('menu-tt')
         return redirect(url_for('update', tt=tt))
 
-@app.route('/update/<tt>')
+@app.route('/update/<tt>', methods=['POST', 'GET'])
 def update(tt):
     conn = dbi.connect()
     movie = db.get_movie_from_tt(conn, tt)
-    return render_template('update.html', movie = movie[0])
+    if request.method == 'GET':
+        # Send the update form
+        return render_template('update.html', movie = movie[0])
+    else:
+        # Method is post, form has been filled out
+        # Update movie and flash success message
+        title = request.form.get('movie-title')
+        tt = request.form.get('movie-tt')
+        release = request.form.get('movie-release')
+        addedby = request.form.get('movie-addedby')
+        director = request.form.get('movie-director')
+        db.update_movie(conn, tt, title, release, director, addedby)
+        flash('Movie (' + str(title) + ') was updated successfully')
+
+
 
 if __name__ == '__main__':
     import sys, os
