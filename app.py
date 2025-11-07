@@ -66,24 +66,50 @@ def update(tt):
         # Method is post, form has been filled out
         # Update movie and flash success message
         title = request.form.get('movie-title')
+        tt = int(request.form.get('movie-tt')) # Form gets string, cast tt as integer
+        release = request.form.get('movie-release')
+        addedby = int(request.form.get('movie-addedby')) # Form gets string, cast addedby as integer
+        director = request.form.get('movie-director')
 
-        tt = request.form.get('movie-tt')
+        # Check for unallowed movie updates
+
         # If tt is updated, ensure the value is available
         if movie['tt'] != tt and len(wmdb.find_tt(conn, tt)) != 0:
             # Flash a message if not available
             flash('The movie id ' + str(tt) + ' was unavailable. Please try again.')
             return redirect(url_for('update', tt=tt))
 
-        release = request.form.get('movie-release')
-        addedby = request.form.get('movie-addedby')
-        
-        director = request.form.get('movie-director')
         # If director is updated, ensure the director exists
         if movie['director'] != director and len(db.find_director(conn, director)) == 0:
             flash('Director not in database. Did not update movie.')
             return render_template('update.html', movie = movie)
 
+        # Ensure title is not none
+        if title == 'None':
+            flash('Title cannot be None. Did not update movie.')
+            return render_template('update.html', movie = movie)
+        
+        # Ensure tt is not none
+        if tt == 'None': 
+            flash('TT cannot be None. Did not update movie.')
+            return render_template('update.html', movie = movie)
+
+        # Catch blank / None type responses to form and convert from strings
+        if release == 'None':
+            release = None
+        if director == 'None':
+            director = None
+        if addedby == 'None':
+            addedby = None
+
+        # Finally, check that the movie's fields were updated at all
+        if title == movie['title'] and tt == movie['tt'] and release == movie['release'] and addedby == movie['addedby'] and director == movie['director']:
+            flash('No fields were edited. Did not update movie.')
+            return render_template('update.html', movie = movie)
+        
+        # Otherwise, update movie and flash 
         db.update_movie(conn, tt, title, release, director, addedby)
+        flash(f'Movie {title} was successfully updated.')
         return redirect(url_for('update', tt=tt))
 
 

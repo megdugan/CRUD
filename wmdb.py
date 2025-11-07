@@ -104,17 +104,7 @@ def update_movie(conn, tt, title, release, director, addedby):
         None
     '''
     curs = dbi.dict_cursor(conn)
-
-    if not tt:
-        tt = ''
-    if not title:
-        title = ''
-    if not release:
-        release = ''
-    if not director:
-        director = ''
-    if not addedby:
-        addedby = ''
+    
     curs.execute('''update movie
                     set tt=%s, title=%s, `release`=%s, director=%s, addedby=%s
                     where tt=%s''', [tt, title, release, director, addedby, tt])
