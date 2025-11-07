@@ -58,9 +58,10 @@ def select():
 def update(tt):
     conn = dbi.connect()
     movie = db.get_movie_from_tt(conn, tt)
+    print(movie)
     if request.method == 'GET':
         # Send the update form
-        return render_template('update.html', movie = movie[0])
+        return render_template('update.html', movie = movie)
     else:
         # Method is post, form has been filled out
         # Update movie and flash success message
@@ -71,7 +72,7 @@ def update(tt):
         if movie['tt'] != tt and len(wmdb.find_tt(conn, tt)) != 0:
             # Flash a message if not available
             flash('The movie id ' + str(tt) + ' was unavailable. Please try again.')
-            return redirect(url_for('update', movie = movie[0]))
+            return redirect(url_for('update', tt=tt))
 
         release = request.form.get('movie-release')
         addedby = request.form.get('movie-addedby')
@@ -80,7 +81,7 @@ def update(tt):
         # If director is updated, ensure the director exists
         if movie['director'] != director and len(db.find_director(conn, director)) == 0:
             flash('Director not in database. Did not update movie.')
-            return render_template('update.html', movie = movie[0])
+            return render_template('update.html', movie = movie)
 
         db.update_movie(conn, tt, title, release, director, addedby)
         return redirect(url_for('update', tt=tt))

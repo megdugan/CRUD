@@ -12,7 +12,7 @@ def get_movie_from_tt(conn, tt):
     '''
     curs = dbi.dict_cursor(conn)
     curs.execute('''select * from movie where tt = %s''', [tt])
-    return curs.fetchall()
+    return curs.fetchone()
 
 def find_tt(conn, tt):
     '''
@@ -28,7 +28,7 @@ def find_tt(conn, tt):
     curs.execute('''select tt
                     from movie
                     where tt=%s''', [tt])
-    return curs.fetchall()
+    return curs.fetchone()
 
 def find_director(conn, director):
     '''
