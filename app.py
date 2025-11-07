@@ -69,8 +69,13 @@ def update(tt):
         release = request.form.get('movie-release')
         addedby = request.form.get('movie-addedby')
         director = request.form.get('movie-director')
-        db.update_movie(conn, tt, title, release, director, addedby)
-        flash('Movie (' + str(title) + ') was updated successfully')
+        d = db.find_director(conn, director)
+        if len(d) > 0:
+            db.update_movie(conn, tt, title, release, director, addedby)
+            flash('Movie (' + str(title) + ') was updated successfully.')
+        else:
+            flash('Director not in database. Did not update movie.')
+        return redirect(url_for('update', tt=tt))
 
 
 

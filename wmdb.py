@@ -30,6 +30,22 @@ def find_tt(conn, tt):
                     where tt=%s''', [tt])
     return curs.fetchall()
 
+def find_director(conn, director):
+    '''
+    Checks if the director id exists in the database.
+    If none, returns none. Otherwise, returns director id.
+    Args:
+        conn -> pymysql.connections.Connection
+        director -> int
+    Return:
+        director id -> int
+    '''
+    curs = dbi.dict_cursor(conn)
+    curs.execute('''select nm
+                    from person
+                    where nm=%s''', [director])
+    return curs.fetchone()
+
 def insert_movie(conn, tt, title, release):
     '''
     Adds the submitted movie to the database.
@@ -88,6 +104,17 @@ def update_movie(conn, tt, title, release, director, addedby):
         None
     '''
     curs = dbi.dict_cursor(conn)
+
+    if not tt:
+        tt = ''
+    if not title:
+        title = ''
+    if not release:
+        release = ''
+    if not director:
+        director = ''
+    if not addedby:
+        addedby = ''
     curs.execute('''update movie
                     set tt=%s, title=%s, `release`=%s, director=%s, addedby=%s
                     where tt=%s''', [tt, title, release, director, addedby, tt])
