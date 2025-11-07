@@ -65,7 +65,14 @@ def update(tt):
         # Method is post, form has been filled out
         # Update movie and flash success message
         title = request.form.get('movie-title')
+
         tt = request.form.get('movie-tt')
+        # If tt is updated, ensure the value is available
+        if movie['tt'] != tt and len(wmdb.find_tt(conn, tt)) != 0:
+            # Flash a message if not available
+            flash('The movie id ' + str(tt) + ' was unavailable. Please try again.')
+            return redirect(url_for('update', movie = movie[0]))
+
         release = request.form.get('movie-release')
         addedby = request.form.get('movie-addedby')
         director = request.form.get('movie-director')
