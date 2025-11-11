@@ -66,9 +66,31 @@ def update(tt):
         # Method is post, form has been filled out
         # Update movie and flash success message
         title = request.form.get('movie-title')
-        tt = int(request.form.get('movie-tt')) # Form gets string, cast tt as integer
+        
+        # get movie id (tt)
+        try:
+            tt = int(request.form.get('movie-tt')) # Form gets string, cast tt as integer
+            if tt < 1:
+                raise Exception
+        except Exception: # if tt is not an integer, do not update movie
+            flash('Movie ID must be an integer greater than 0. Did not update movie.')
+            return render_template('update.html', movie = movie)
+        
+        # get addedby id
+        try:
+            addedby = int(request.form.get('movie-addedby')) # Form gets string, cast addedby as integer
+            if addedby < 1:
+                raise Exception # if addedby is not an integer, do not update movie
+        except Exception:
+            flash('Added by must be an integer greater than 0. Did not update movie.')
+            return render_template('update.html', movie = movie)
+        
+        # get release
         release = request.form.get('movie-release')
-        addedby = int(request.form.get('movie-addedby')) # Form gets string, cast addedby as integer
+        if not release.isdigit() or not len(release) == 4: # if year is not 4-digit integer, do not update movie
+            flash('Release must be a 4-digit year. Did not update movie.')
+            return render_template('update.html', movie = movie)
+        # get director
         director = request.form.get('movie-director')
 
         # Check for unallowed movie updates
@@ -111,8 +133,6 @@ def update(tt):
         db.update_movie(conn, tt, title, release, director, addedby)
         flash(f'Movie {title} was successfully updated.')
         return redirect(url_for('update', tt=tt))
-
-
 
 if __name__ == '__main__':
     import sys, os
