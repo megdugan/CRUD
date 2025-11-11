@@ -110,7 +110,7 @@ def update(tt):
         # Otherwise, update movie and flash 
         movie = db.update_movie(conn, tt, title, release, director, addedby)
         flash(f'{title} was successfully updated.')
-        return redirect(url_for('update', movie = movie))
+        return render_template('update.html', movie = movie)
 
 if __name__ == '__main__':
     import sys, os
