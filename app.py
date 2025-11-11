@@ -31,7 +31,7 @@ def insert():
         release = request.form.get('movie-release')
 
         conn = dbi.connect()
-        if len(wmdb.find_tt(conn, tt)) == 0:
+        if wmdb.find_tt(conn, tt) == None:
             # The tt is available, so add the movie to the database
             wmdb.insert_movie(conn, tt, title, release)
             return redirect(url_for('update', tt=tt))
@@ -74,13 +74,13 @@ def update(tt):
         # Check for unallowed movie updates
 
         # If tt is updated, ensure the value is available
-        if movie['tt'] != tt and len(wmdb.find_tt(conn, tt)) != 0:
+        if movie['tt'] != tt and wmdb.find_tt(conn, tt) != None:
             # Flash a message if not available
             flash('The movie id ' + str(tt) + ' was unavailable. Please try again.')
             return redirect(url_for('update', tt=tt))
 
         # If director is updated, ensure the director exists
-        if movie['director'] != director and len(db.find_director(conn, director)) == 0:
+        if movie['director'] != director and db.find_director(conn, director) == None:
             flash('Director not in database. Did not update movie.')
             return render_template('update.html', movie = movie)
 
@@ -108,15 +108,13 @@ def update(tt):
             return render_template('update.html', movie = movie)
         
         # Otherwise, update movie and flash 
-        db.update_movie(conn, tt, title, release, director, addedby)
-        flash(f'Movie {title} was successfully updated.')
-        return redirect(url_for('update', tt=tt))
-
-
+        movie = db.update_movie(conn, tt, title, release, director, addedby)
+        flash(f'{title} was successfully updated.')
+        return redirect(url_for('update', movie = movie))
 
 if __name__ == '__main__':
     import sys, os
-    dbi.conf('nh107_db')
+    dbi.conf('md109_db')
     if len(sys.argv) > 1:
         # arg, if any, is the desired port number
         port = int(sys.argv[1])

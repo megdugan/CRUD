@@ -46,6 +46,11 @@ h3 {
     text-align: center;
 }
 
+.message {
+    color: #316775;
+    font-weight: bold;
+}
+
 a {
     text-decoration: none;
 }
