@@ -36,13 +36,13 @@ def insert():
         # Checks that all values are entered
         if tt == "":
             flash('Please enter a tt value.')
-            return redirect(url_for('insert'))
+            return render_template('insert.html')
         if title == "":
             flash('Please enter a title.')
-            return redirect(url_for('insert'))
+            return render_template('insert.html')
         if release == "":
             flash('Please enter a release year.')
-            return redirect(url_for('insert'))
+            return render_template('insert.html')
 
         conn = dbi.connect()
         if wmdb.find_tt(conn, tt) == None:
@@ -52,7 +52,7 @@ def insert():
         else:
             # The tt is available, so flash a message and reset the form.
             flash('The movie id ' + str(tt) + ' was unavailable. Please try again.')
-            return redirect(url_for('insert'))
+            return render_template('insert.html')
 
 # On GET shows a menu of movies with incomplete information, either null value 
 # for either release or director and on POST redirects to the /update/nnn page 
