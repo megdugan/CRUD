@@ -81,80 +81,88 @@ def update(tt):
         # Send the update form
         return render_template('update.html', movie = movie)
     else:
-        # Method is post, form has been filled out
-        # Update movie and flash success message
-        title = request.form.get('movie-title')
-        
-        # get movie id (tt)
-        try:
-            tt = int(request.form.get('movie-tt')) # Form gets string, cast tt as integer
-            if tt < 1:
-                raise Exception
-        except Exception: # if tt is not an integer, do not update movie
-            flash('Movie ID must be an integer greater than 0. Did not update movie.')
-            return render_template('update.html', movie = movie)
-        
-        # get addedby id
-        try:
-            addedby = int(request.form.get('movie-addedby')) # Form gets string, cast addedby as integer
-            if addedby < 1:
-                raise Exception # if addedby is not an integer, do not update movie
-        except Exception:
-            flash('Added by must be an integer greater than 0. Did not update movie.')
-            return render_template('update.html', movie = movie)
-        
-        # get release
-        release = request.form.get('movie-release')
-        if not release.isdigit() or not len(release) == 4: # if year is not 4-digit integer, do not update movie
-            flash('Release must be a 4-digit year. Did not update movie.')
-            return render_template('update.html', movie = movie)
-        # get director
-        director = request.form.get('movie-director')
+        button = request.form.get('submit')
+        if button == 'update':
+            # Method is post, and button is update, form has been filled out
+            # Update movie and flash success message
+            title = request.form.get('movie-title')
+            
+            # get movie id (tt)
+            try:
+                tt = int(request.form.get('movie-tt')) # Form gets string, cast tt as integer
+                if tt < 1:
+                    raise Exception
+            except Exception: # if tt is not an integer, do not update movie
+                flash('Movie ID must be an integer greater than 0. Did not update movie.')
+                return render_template('update.html', movie = movie)
+            
+            # get addedby id
+            try:
+                addedby = int(request.form.get('movie-addedby')) # Form gets string, cast addedby as integer
+                if addedby < 1:
+                    raise Exception # if addedby is not an integer, do not update movie
+            except Exception:
+                flash('Added by must be an integer greater than 0. Did not update movie.')
+                return render_template('update.html', movie = movie)
+            
+            # get release
+            release = request.form.get('movie-release')
+            if not release.isdigit() or not len(release) == 4: # if year is not 4-digit integer, do not update movie
+                flash('Release must be a 4-digit year. Did not update movie.')
+                return render_template('update.html', movie = movie)
+            # get director
+            director = request.form.get('movie-director')
 
-        # Check for unallowed movie updates
+            # Check for unallowed movie updates
 
-        # If tt is updated, ensure the value is available
-        if movie['tt'] != tt and wmdb.find_tt(conn, tt) != None:
-            # Flash a message if not available
-            flash('The movie id ' + str(tt) + ' was unavailable. Please try again.')
-            return redirect(url_for('update', tt=tt))
+            # If tt is updated, ensure the value is available
+            if movie['tt'] != tt and wmdb.find_tt(conn, tt) != None:
+                # Flash a message if not available
+                flash('The movie id ' + str(tt) + ' was unavailable. Please try again.')
+                return redirect(url_for('update', tt=tt))
 
-        # If director is updated, ensure the director exists
-        if movie['director'] != director and db.find_director(conn, director) == None:
-            flash('Director not in database. Did not update movie.')
+            # If director is updated, ensure the director exists
+            if movie['director'] != director and db.find_director(conn, director) == None:
+                flash('Director not in database. Did not update movie.')
+                return render_template('update.html', movie = movie)
+
+            # Ensure title is not none
+            if title == 'None':
+                flash('Title cannot be None. Did not update movie.')
+                return render_template('update.html', movie = movie)
+            
+            # Ensure tt is not none
+            if tt == 'None': 
+                flash('TT cannot be None. Did not update movie.')
+                return render_template('update.html', movie = movie)
+
+            # Catch blank / None type responses to form and convert from strings
+            if release == 'None':
+                release = None
+            if director == 'None':
+                director = None
+            if addedby == 'None':
+                addedby = None
+
+            # Finally, check that the movie's fields were updated at all
+            if title == movie['title'] and tt == movie['tt'] and release == movie['release'] and addedby == movie['addedby'] and director == movie['director']:
+                flash('No fields were edited. Did not update movie.')
+                return render_template('update.html', movie = movie)
+            
+            # Otherwise, update movie and flash 
+            movie = db.update_movie(conn, tt, title, release, director, addedby)
+            flash(f'{title} was successfully updated.')
             return render_template('update.html', movie = movie)
-
-        # Ensure title is not none
-        if title == 'None':
-            flash('Title cannot be None. Did not update movie.')
-            return render_template('update.html', movie = movie)
-        
-        # Ensure tt is not none
-        if tt == 'None': 
-            flash('TT cannot be None. Did not update movie.')
-            return render_template('update.html', movie = movie)
-
-        # Catch blank / None type responses to form and convert from strings
-        if release == 'None':
-            release = None
-        if director == 'None':
-            director = None
-        if addedby == 'None':
-            addedby = None
-
-        # Finally, check that the movie's fields were updated at all
-        if title == movie['title'] and tt == movie['tt'] and release == movie['release'] and addedby == movie['addedby'] and director == movie['director']:
-            flash('No fields were edited. Did not update movie.')
-            return render_template('update.html', movie = movie)
-        
-        # Otherwise, update movie and flash 
-        movie = db.update_movie(conn, tt, title, release, director, addedby)
-        flash(f'{title} was successfully updated.')
-        return render_template('update.html', movie = movie)
+        if button == 'delete':
+            title = db.get_movie_from_tt(conn, tt)['title']
+            flash(f'Movie {title} has been deleted.')
+            db.delete_movie(conn, tt)
+            incomplete_movies = db.get_incomplete_movies(conn)
+            return render_template('select.html', movies=incomplete_movies)
 
 if __name__ == '__main__':
     import sys, os
-    dbi.conf('md109_db')
+    dbi.conf('nh107_db')
     if len(sys.argv) > 1:
         # arg, if any, is the desired port number
         port = int(sys.argv[1])
