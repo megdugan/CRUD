@@ -35,11 +35,17 @@ def insert():
         
         # Checks that all values are entered
         if tt == "":
-            flash('Please enter a tt value.')
+            flash('Movie ID cannot be blank. Did not insert movie.')
             return render_template('insert.html')
         if title == "":
-            flash('Please enter a title.')
+            flash('Title cannot be blank. Did not insert movie.')
             return render_template('insert.html')
+
+        if release != "":
+            print('blank')
+            if not release.isdigit() or not len(release) == 4: # if year is not 4-digit integer, do not update movie
+                flash('Release must be a 4-digit year. Did not insert movie.')
+                return render_template('insert.html')
 
         conn = dbi.connect()
         if wmdb.find_tt(conn, tt) == None:
@@ -48,7 +54,7 @@ def insert():
             return redirect(url_for('update', tt=tt))
         else:
             # The tt is available, so flash a message and reset the form.
-            flash('The movie id ' + str(tt) + ' was unavailable. Please try again.')
+            flash('The movie id ' + str(tt) + ' was unavailable. Did not insert movie.')
             return render_template('insert.html')
 
 # On GET shows a menu of movies with incomplete information, either null value 
@@ -105,7 +111,7 @@ def update(tt):
             
             # get release
             release = request.form.get('movie-release')
-            if release != '' and (not release.isdigit() or not len(release)) == 4: # if year is not 4-digit integer, do not update movie
+            if release != '' and (not release.isdigit() or not len(release) == 4): # if year is not 4-digit integer, do not update movie
                 flash('Release must be a 4-digit year. Did not update movie.')
                 return render_template('update.html', movie = movie, director = dname, staff = abname)
             # get director
@@ -116,7 +122,7 @@ def update(tt):
             # If tt is updated, ensure the value is available
             if movie['tt'] != tt and wmdb.find_tt(conn, tt) != None:
                 # Flash a message if not available
-                flash('The movie id ' + str(tt) + ' was unavailable. Please try again.')
+                flash('The movie id ' + str(tt) + ' was unavailable. Did not update movie.')
                 return redirect(url_for('update', tt=tt))
 
             # If director is updated, ensure the director exists
@@ -162,7 +168,7 @@ def update(tt):
 
 if __name__ == '__main__':
     import sys, os
-    dbi.conf('md109_db')
+    dbi.conf('nh107_db')
     if len(sys.argv) > 1:
         # arg, if any, is the desired port number
         port = int(sys.argv[1])
