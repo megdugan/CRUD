@@ -154,18 +154,18 @@ def update(tt):
             print(f"director {director}")
             dname = db.get_director_name(conn, director)
             abname = db.get_addedby_name(conn, addedby)
-            db.update_movie(conn, tt, title, release, director, addedby)
+            movie = db.update_movie(conn, tt, title, release, director, addedby)
             flash(f'{title} was successfully updated.')
             return render_template('update.html', movie = movie, director = dname, staff = abname)
         if button == 'delete':
-            movie = db.delete_movie(conn, tt)
+            title = request.form.get('movie-title')
             flash(f'Movie {title} has been deleted.')
-            incomplete_movies = db.get_incomplete_movies(conn)
-            return render_template('select.html', movies=incomplete_movies)
+            db.delete_movie(conn, tt)
+            return redirect(url_for('select'))
 
 if __name__ == '__main__':
     import sys, os
-    dbi.conf('nh107_db')
+    dbi.conf('md109_db')
     if len(sys.argv) > 1:
         # arg, if any, is the desired port number
         port = int(sys.argv[1])
