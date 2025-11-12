@@ -15,10 +15,13 @@ app.secret_key = secrets.token_hex()
 # This gets us better error messages for certain common request errors
 app.config['TRAP_BAD_REQUEST_ERRORS'] = True
 
+# Main / welcome page
 @app.route('/')
 def main():
     return render_template('main.html', page_title='Main Page')
 
+# Gives the insert form on a GET and processes the insertion on a POST 
+# (and then redirects to the /update/nnn page
 @app.route('/insert/', methods=['GET', 'POST'])
 def insert():
     if request.method == 'GET':
@@ -29,6 +32,17 @@ def insert():
         tt = request.form.get('movie-tt')
         title = request.form.get('movie-title')
         release = request.form.get('movie-release')
+        
+        # Checks that all values are entered
+        if tt == "":
+            flash('Please enter a tt value.')
+            return redirect(url_for('insert'))
+        if title == "":
+            flash('Please enter a title.')
+            return redirect(url_for('insert'))
+        if release == "":
+            flash('Please enter a release year.')
+            return redirect(url_for('insert'))
 
         conn = dbi.connect()
         if wmdb.find_tt(conn, tt) == None:
@@ -40,7 +54,9 @@ def insert():
             flash('The movie id ' + str(tt) + ' was unavailable. Please try again.')
             return redirect(url_for('insert'))
 
-
+# On GET shows a menu of movies with incomplete information, either null value 
+# for either release or director and on POST redirects to the /update/nnn page 
+# for that movie
 @app.route('/select/', methods=['POST', 'GET'])
 def select():
     conn = dbi.connect()
@@ -54,6 +70,8 @@ def select():
         tt = request.form.get('menu-tt')
         return redirect(url_for('update', tt=tt))
 
+# Shows a form for updating a particular movie, with the TT of the movie 
+# in the URL on GET and on POST does the update and shows the form again
 @app.route('/update/<tt>', methods=['POST', 'GET'])
 def update(tt):
     conn = dbi.connect()

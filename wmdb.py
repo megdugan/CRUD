@@ -4,7 +4,8 @@
 
 import cs304dbi as dbi
 
-addedby = 123
+# Meg's uid
+addedby = 10039
 
 def get_movie_from_tt(conn, tt):
     '''
