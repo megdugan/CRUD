@@ -46,6 +46,43 @@ def find_director(conn, director):
                     where nm=%s''', [director])
     return curs.fetchone()
 
+def get_director_name(conn, nm):
+    '''
+    Gets the director name from the database.
+    The director nm must already exist in the database.
+    Args:
+        conn -> pymysql.connections.Connection
+        nm -> int
+    Return:
+        director name -> str
+    '''
+    print(nm)
+    if not nm:
+        return 'None Specified'
+    curs = dbi.dict_cursor(conn)
+    curs.execute('''select name
+                    from person
+                    where nm=%s''', [nm])
+    return curs.fetchone()['name']
+
+def get_addedby_name(conn, uid):
+    '''
+    Gets the director name from the database.
+    The director nm must already exist in the database.
+    Args:
+        conn -> pymysql.connections.Connection
+        id -> int
+    Return:
+        staff name -> str
+    '''
+    if not uid:
+        return 'None Specified'
+    curs = dbi.dict_cursor(conn)
+    curs.execute('''select name
+                    from staff
+                    where uid=%s''', [uid])
+    return curs.fetchone()['name']
+
 def insert_movie(conn, tt, title, release):
     '''
     Adds the submitted movie to the database.
@@ -109,10 +146,7 @@ def update_movie(conn, tt, title, release, director, addedby):
                     set tt=%s, title=%s, `release`=%s, director=%s, addedby=%s
                     where tt=%s''', [tt, title, release, director, addedby, tt])
     conn.commit()
-
-    # Gets new movie values to display them
-    curs.execute('''select * from movie where tt = %s''', [tt])
-    return curs.fetchone()
+    return
 
 def delete_movie(conn, tt):
     '''
