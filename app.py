@@ -40,9 +40,6 @@ def insert():
         if title == "":
             flash('Please enter a title.')
             return render_template('insert.html')
-        if release == "":
-            flash('Please enter a release year.')
-            return render_template('insert.html')
 
         conn = dbi.connect()
         if wmdb.find_tt(conn, tt) == None:
