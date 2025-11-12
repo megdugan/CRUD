@@ -147,7 +147,8 @@ def update_movie(conn, tt, title, release, director, addedby):
                     set tt=%s, title=%s, `release`=%s, director=%s, addedby=%s
                     where tt=%s''', [tt, title, release, director, addedby, tt])
     conn.commit()
-    return
+    curs.execute('''select * from movie where tt = %s''', [tt])
+    return curs.fetchone()
 
 def delete_movie(conn, tt):
     '''

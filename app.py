@@ -78,7 +78,6 @@ def update(tt):
     movie = db.get_movie_from_tt(conn, tt)
     dname = db.get_director_name(conn, movie['director'])
     abname = db.get_addedby_name(conn, movie['addedby'])
-    print(abname)
     if request.method == 'GET':
         # Send the update form
         return render_template('update.html', movie = movie, director = dname, staff = abname)
@@ -152,13 +151,15 @@ def update(tt):
                 return render_template('update.html', movie = movie, director = dname, staff = abname)
             
             # Otherwise, update movie and flash 
-            movie = db.update_movie(conn, tt, title, release, director, addedby)
+            print(f"director {director}")
+            dname = db.get_director_name(conn, director)
+            abname = db.get_addedby_name(conn, addedby)
+            db.update_movie(conn, tt, title, release, director, addedby)
             flash(f'{title} was successfully updated.')
             return render_template('update.html', movie = movie, director = dname, staff = abname)
         if button == 'delete':
-            title = db.get_movie_from_tt(conn, tt)['title']
+            movie = db.delete_movie(conn, tt)
             flash(f'Movie {title} has been deleted.')
-            db.delete_movie(conn, tt)
             incomplete_movies = db.get_incomplete_movies(conn)
             return render_template('select.html', movies=incomplete_movies)
 
